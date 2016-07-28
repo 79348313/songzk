@@ -1,0 +1,81 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>拖拽</title>
+<style>
+#div1{ width:100px; height:100px; background:#F00; position:absolute;}
+#img1{ position:absolute;}
+</style>
+<script>
+window.onload = function(){
+	
+	var oDiv = document.getElementById('div1');
+	var oDiv2 = document.getElementById('div2');
+	var oImg = document.getElementById('img1');
+	
+	drag(oDiv);
+	drag(oImg);
+	drag(oDiv2);
+	
+	function drag(obj){
+	
+		obj.onmousedown = function(ev){
+			
+			var ev = ev || event;
+			// 鼠标到元素的距离=鼠标偏移位置-div到可视区的距离
+			var disX = ev.clientX - this.offsetLeft;
+			var disY = ev.clientY - this.offsetTop;
+			// 兼容ie8以下： 全局捕获
+			if(obj.setCapture){
+				obj.setCapture;
+			}
+			document.onmousemove = function(ev){
+				
+				var ev = ev || event;
+				var L = ev.clientX - disX
+				var T = ev.clientY - disY
+				// L<0磁铁吸附效果改值：L<50;
+				if(L < 50){
+					L = 0;
+				}else if( L > document.documentElement.clientWidth - obj.offsetWidth ){
+					 L = document.documentElement.clientWidth - obj.offsetWidth;
+				};
+				
+				if(T < 50){
+					T = 0;
+				}else if( T > document.documentElement.clientHeight - obj.offsetHeight ){
+					 T = document.documentElement.clientHeight - obj.offsetHeight;
+				};
+				 
+				obj.style.left = L + 'px';
+				obj.style.top = T + 'px';
+			
+			};	
+		
+			document.onmouseup = function(){
+			
+				document.onmousemove = document.onmouseup = '';
+				// 兼容ie8以下： 释放全局捕获
+				if(obj.releaseCapture){
+					obj.releaseCapture;
+				}
+			};
+			// 选择文字的时候拖拽会有bug，取消默认行为即可：
+			return false;   
+		};
+		
+	};
+};
+
+</script>
+
+</head>
+
+<body>
+12312231231223
+<div id="div1"></div>
+<div id="div2" style="width:100px; height:100px; background:#0F0; position:absolute; left:400px; top:200px;"></div>
+<img id="img1" src="../img/active.png" alt="1">
+</body>
+</html>
