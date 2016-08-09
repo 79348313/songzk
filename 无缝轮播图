@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>无缝轮播图</title>
+<style>
+*{ margin:0; padding:0; }
+li{ list-style:none;}
+.banner{ width:1000px; height:332px; margin:100px auto; overflow:hidden; position:relative; }
+.banner .img{ width:4000px; position:absolute; left:0; top:0;}
+.banner .img li{ float:left;}
+.banner .num{ position:absolute; bottom:10px; left:0; text-align:center; width:100%; font-size:0;}
+.banner .num li{ width:15px; height:15px; background:#999; border-radius:50%; display:inline-block; margin:0 5px; cursor:pointer;}
+.banner .num .active{ background:#F33;}
+.banner .btn{ width:30px; height:60px; position:absolute; top:50%; margin-top:-30px; background:rgba(0,0,0,0.5); color:#FFF; font-size:50px; line-height:60px; text-align:center; font-family:"宋体"; cursor:pointer; display:none;}
+.banner:hover .btn{ display:block;}
+.banner .prev{ left:0;}
+.banner .next{ right:0;}
+</style>
+<script src="js/jquery-1.10.1.js"></script>
+<script>
+$(function(){
+	
+
+	var i = 0;
+	var clone = $('.banner .img li').first().clone();
+	$('.banner .img').append(clone);	//clone.appendTo($('.banner .img'));
+	var size = $('.banner .img li').size();
+	// js里创建圆点
+	for(var j=0;j<size-1;j++){
+		$('<li>').appendTo($('.banner .num'));
+	};
+	$('.banner .num li').first().addClass('active');
+	
+	//鼠标滑入圆点
+	$('.banner .num li').hover(function(){
+		var index = $(this).index();
+		i=index;
+		$('.banner .img').stop().animate({left:index*-1000},500,'swing');
+		$(this).addClass('active').siblings().removeClass('active');
+	});
+	
+	//自动轮播
+	var time = setInterval(moveNext,2000);
+	
+	//鼠标移入banner里停止自动轮播
+	$('.banner').hover(function(){
+		clearInterval(time);
+	},function(){
+		time = setInterval(moveNext,2000);
+	});
+	
+	//向左按钮
+	$('.banner .prev').click(function(){
+		movePrev();
+	});
+	
+	//向右按钮
+	$('.banner .next').click(function(){
+		moveNext();
+	});
+	
+	
+	function movePrev(){
+		i--;
+		if(i==-1){
+			$('.banner .img').css({left:(size-1)*-1000});
+			i=size-2;
+		};
+		$('.banner .img').stop().animate({left:i*-1000},500,'swing');
+		
+		$('.banner .num li').eq(i).addClass('active').siblings().removeClass('active')
+	};
+
+	function moveNext(){
+		i++;
+		if(i==size){
+			$('.banner .img').css({left:0});
+			i=1;
+		};
+		$('.banner .img').stop().animate({left:i*-1000},500,'swing');
+		
+		if(i==size-1){
+			$('.banner .num li').eq(0).addClass('active').siblings().removeClass('active');
+		}else{
+			$('.banner .num li').eq(i).addClass('active').siblings().removeClass('active');
+		};
+	};
+	
+	
+	
+});
+
+</script>
+
+</head>
+<body>
+<div class="banner">
+	<ul class="img">
+		<li><a href="#"><img src="images/banner1.jpg" alt="1"></a></li>
+		<li><a href="#"><img src="images/banner2.jpg" alt="2"></a></li>
+		<li><a href="#"><img src="images/banner3.jpg" alt="3"></a></li>
+	</ul>
+	<ul class="num">
+	</ul>
+	<div class="prev btn">&lt;</div>
+	<div class="next btn">&gt;</div>
+</div>
+</body>
+</html>
